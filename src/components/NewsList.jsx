@@ -1,11 +1,23 @@
 import React, { useEffect, useState } from "react";
 import NewsCard from "./NewsCard";
 import axios from "axios";
+
 const NewsList = () => {
-  const [articles, setArticles] = useState(
-    JSON.parse(localStorage.getItem("articles")) || []
-  );
+  const [articles, setArticles] = useState(() => {
+    // Initialize articles with a safe check for localStorage
+    const storedArticles = localStorage.getItem("articles");
+    if (storedArticles) {
+      try {
+        return JSON.parse(storedArticles);
+      } catch (error) {
+        console.error("Error parsing articles from localStorage:", error);
+      }
+    }
+    return [];
+  });
+
   const [query, setQuery] = useState("");
+
   useEffect(() => {
     if (query) {
       const fetchArticles = async () => {
@@ -21,9 +33,8 @@ const NewsList = () => {
           );
           console.log(
             "Articles stored in local storage:",
-            JSON.stringify(response.data.articles)
+            response.data.articles
           );
-          console.log(response.data.articles);
         } catch (error) {
           console.error("Error fetching articles:", error);
         }
@@ -34,25 +45,32 @@ const NewsList = () => {
       setArticles([]);
     }
   }, [query]);
+
   const handleChange = (e) => {
     setQuery(e.target.value);
   };
+
   return (
     <>
       <div>
         <input
           type="text"
-          placeholder="Search News.."
+          placeholder="Search News..."
           onChange={handleChange}
           value={query}
         />
       </div>
       <div className="news-list">
-        {articles.map((article, index) => (
-          <NewsCard key={index} article={article} />
-        ))}
+        {articles.length > 0 ? (
+          articles.map((article, index) => (
+            <NewsCard key={index} article={article} />
+          ))
+        ) : (
+          <p>Search For the Desired News.</p>
+        )}
       </div>
     </>
   );
 };
+
 export default NewsList;
