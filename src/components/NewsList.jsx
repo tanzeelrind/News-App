@@ -23,7 +23,7 @@ const NewsList = () => {
       const fetchArticles = async () => {
         try {
           const response = await axios.get(
-            `${process.env.REACT_APP_API_URL}/everything?q=${query}&apiKey=${process.env.REACT_APP_API_KEY}`
+            `https://newsapi.org/v2/everything?q=${query}&apiKey=db7589b753184582897466c77ebbd40f`
           );
 
           setArticles(response.data.articles);
